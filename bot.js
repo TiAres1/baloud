@@ -1,5 +1,4 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-require('dotenv').config();
 
 // إنشاء البوت مع الـ intents المطلوبة
 const client = new Client({
@@ -68,7 +67,4 @@ client.on('error', (error) => {
     console.error('❌ خطأ في البوت:', error);
 });
 
-client.login("MTM1ODc3NDA5MzM1NjQ2NjIxNw.Gs8ZQh.ECUBw3Lo6UJZrA6emiMMUppdOcp5ymT4lt1PmU").catch(error => {
-    console.error('❌ فشل في تسجيل دخول البوت:', error);
-    console.log('تأكد من أن token البوت صحيح في ملف .env');
-});
+client.login("MTM1ODc3NDA5MzM1NjQ2NjIxNw.Gs8ZQh.ECUBw3Lo6UJZrA6emiMMUppdOcp5ymT4lt1PmU")
