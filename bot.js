@@ -67,4 +67,4 @@ client.on('error', (error) => {
     console.error('❌ خطأ في البوت:', error);
 });
 
-client.login('MTM1ODc3NDA5MzM1NjQ2NjIxNw.G5n4Ae.NddGX3bYnzv4utvTKHHB8U4JN2bJB2nd-MPPu0')
+client.login('MTM4MDIzOTUzODk3ODI5NTgzOA.GaR1I9.BlcXxRbXz_74bOmm7TDIiIFfYvOThKgOS1tFOw')
