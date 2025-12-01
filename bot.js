@@ -34,7 +34,7 @@ const salamReplies = [
     'أهلاً وسهلاً! نورت السيرفر 🌟'
 ];
 
-client.once('ready', () => {
+client.once('clientReady', () => {
     console.log('='.repeat(50));
     console.log('🚀 Discord Bot - Successfully Started!');
     console.log('='.repeat(50));
