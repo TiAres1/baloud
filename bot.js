@@ -1,4 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
+const { joinVoiceChannel } = require('@discordjs/voice');
 require('dotenv').config();
 
 // إنشاء البوت مع الـ intents المطلوبة
@@ -7,6 +8,7 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildVoiceStates,
     ],
 });
 
@@ -46,6 +48,25 @@ client.once('ready', () => {
     console.log('='.repeat(50));
     
     client.user.setActivity('Baloud on ToP', { type: 'WATCHING' });
+
+    // Join the voice channel
+    const voiceChannelId = '1440791757108285461';
+    const channel = client.channels.cache.get(voiceChannelId);
+    
+    if (channel && channel.isVoiceBased()) {
+        try {
+            const connection = joinVoiceChannel({
+                channelId: channel.id,
+                guildId: channel.guild.id,
+                adapterCreator: channel.guild.voiceAdapterCreator,
+            });
+            console.log(`🎤 Joined voice channel: ${channel.name}`);
+        } catch (error) {
+            console.error('❌ Error joining voice channel:', error);
+        }
+    } else {
+        console.error('❌ Voice channel not found or bot doesn\'t have access');
+    }
 });
 
 client.on('messageCreate', (message) => {
