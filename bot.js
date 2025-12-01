@@ -2,6 +2,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
 require('dotenv').config();
 
+
 // إنشاء البوت مع الـ intents المطلوبة
 const client = new Client({
     intents: [
