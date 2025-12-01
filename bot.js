@@ -68,4 +68,4 @@ client.on('error', (error) => {
     console.error('❌ خطأ في البوت:', error);
 });
 
-client.login(process.env.TOKEN);
+client.login("MTM4MDIzOTUzODk3ODI5NTgzOA.Geyt6A.wD_gD1WrkG2I5tHk325zDzL6_DCrpsv5oHpwVo");
