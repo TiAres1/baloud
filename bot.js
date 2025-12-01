@@ -1,7 +1,8 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnectionStatus } = require('@discordjs/voice');
+const ytdl = require('@distube/ytdl-core');
+const ytsearch = require('yt-search');
 require('dotenv').config();
-
 
 // إنشاء البوت مع الـ intents المطلوبة
 const client = new Client({
@@ -34,6 +35,10 @@ const salamReplies = [
     'أهلاً وسهلاً! نورت السيرفر 🌟'
 ];
 
+const VOICE_CHANNEL_ID = '1440791757108285461';
+let connection = null;
+let player = null;
+
 client.once('clientReady', () => {
     console.log('='.repeat(50));
     console.log('🚀 Discord Bot - Successfully Started!');
@@ -51,16 +56,28 @@ client.once('clientReady', () => {
     client.user.setActivity('Baloud on ToP', { type: 'WATCHING' });
 
     // Join the voice channel
-    const voiceChannelId = '1440791757108285461';
+    const voiceChannelId = VOICE_CHANNEL_ID;
     const channel = client.channels.cache.get(voiceChannelId);
     
     if (channel && channel.isVoiceBased()) {
         try {
-            const connection = joinVoiceChannel({
+            connection = joinVoiceChannel({
                 channelId: channel.id,
                 guildId: channel.guild.id,
                 adapterCreator: channel.guild.voiceAdapterCreator,
             });
+            
+            player = createAudioPlayer();
+            connection.subscribe(player);
+            
+            player.on(AudioPlayerStatus.Idle, () => {
+                console.log('🎵 Music finished playing');
+            });
+            
+            player.on('error', error => {
+                console.error('❌ Audio player error:', error);
+            });
+            
             console.log(`🎤 Joined voice channel: ${channel.name}`);
         } catch (error) {
             console.error('❌ Error joining voice channel:', error);
@@ -70,18 +87,71 @@ client.once('clientReady', () => {
     }
 });
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
     const messageContent = message.content.toLowerCase().trim();
 
+    // Check if message is from the voice channel's text chat
+    const voiceChannel = client.channels.cache.get(VOICE_CHANNEL_ID);
+    const isVoiceChannelChat = voiceChannel && message.channel.id === voiceChannel.id;
+
+    // Handle music play command (ش)
+    if (messageContent.startsWith('ش ') && isVoiceChannelChat) {
+        const searchQuery = message.content.slice(2).trim();
+        
+        if (!searchQuery) {
+            return message.reply('❌ الرجاء كتابة اسم الأغنية بعد الأمر');
+        }
+
+        try {
+            message.reply('🔍 جاري البحث عن الأغنية...');
+            
+            const searchResults = await ytsearch(searchQuery);
+            const video = searchResults.videos[0];
+            
+            if (!video) {
+                return message.reply('❌ لم يتم العثور على الأغنية');
+            }
+
+            const stream = ytdl(video.url, {
+                filter: 'audioonly',
+                quality: 'highestaudio',
+                highWaterMark: 1 << 25
+            });
+
+            const resource = createAudioResource(stream);
+            player.play(resource);
+
+            message.reply(`🎵 يتم الآن تشغيل: **${video.title}**`);
+            console.log(`🎵 Playing: ${video.title}`);
+            
+        } catch (error) {
+            console.error('❌ Error playing music:', error);
+            message.reply('❌ حدث خطأ أثناء تشغيل الأغنية');
+        }
+        return;
+    }
+
+    // Handle music stop command (ق)
+    if (messageContent === 'ق' && isVoiceChannelChat) {
+        if (player) {
+            player.stop();
+            message.reply('⏹️ تم إيقاف الموسيقى');
+            console.log('⏹️ Music stopped');
+        } else {
+            message.reply('❌ لا توجد موسيقى قيد التشغيل');
+        }
+        return;
+    }
+
+    // Handle greeting messages
     const containsSalam = salamMessages.some(salam => 
         messageContent.includes(salam.toLowerCase())
     );
 
     if (containsSalam) {
         const randomReply = salamReplies[Math.floor(Math.random() * salamReplies.length)];
-        
         message.reply(randomReply);
     }
 });
