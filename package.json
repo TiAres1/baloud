@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "بوت دسكورد للرد التلقائي على السلام",
   "main": "bot.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node bot.js",
     "dev": "nodemon bot.js"
@@ -15,10 +18,11 @@
   "author": "Maaz",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/voice": "^0.19.0",
+    "@discordjs/voice": "^0.17.0",
     "@distube/ytdl-core": "^4.14.4",
     "discord.js": "^14.25.1",
     "dotenv": "^16.3.1",
+    "libsodium-wrappers": "^0.7.15",
     "yt-search": "^2.10.4"
   },
   "devDependencies": {
